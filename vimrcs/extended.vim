@@ -9,25 +9,34 @@
 " => GUI related
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set font according to system
-if has("mac") || has("macunix")
-    set gfn=Hack:h11,Monaco:h11,Source\ Code\ Pro:h12,Menlo:h11,IBM\ Plex\ Mono:h12
-endif
 
 " Disable scrollbars (real hackers don't use scrollbars for navigation!)
 set guioptions-=r
 set guioptions-=R
 set guioptions-=l
 set guioptions-=L
-set number 
+set number
 
 " Colorscheme
 set background=dark
+" colorscheme gotham256
+set termguicolors     " enable true colors support
+" let ayucolor="light"  " for light version of theme
+" let ayucolor="mirage" " for mirage version of theme
+" let ayucolor="dark"   " for dark version of theme
+" colorscheme nachtleben
+" colorscheme gotham256
+" colorscheme orbital
+" colorscheme monokai_pro
+colorscheme lucid
 
-if has("gui")
-  colorscheme brogrammer
-else
-  colorscheme brogrammer
-endif
+" $NVIM_TUI_ENABLE_CURSOR_SHAPE = 1
+let &t_SI = "\<Esc>]50;CursorShape=0\x7"
+let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+
+set guicursor="n-v-c-sm:block,i-ci-ve:block,r-cr-o:block"
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -189,4 +198,23 @@ nnoremap <leader>tr :call StripTrailingWhitespaces()<CR>
 set list
 set listchars=eol:¬,tab:>.,trail:~,extends:>
 set path+=**
-set clipboard=unnamed
+
+if has("clipboard")
+  set clipboard=unnamed " copy to the system clipboard
+
+  if has("unnamedplus") " X11 support
+    set clipboard+=unnamedplus
+  endif
+endif
+
+" Performance improvments
+if has("mac")
+  set nocursorline
+
+  if exists("+relativenumber")
+    set norelativenumber
+  endif
+
+  set foldlevel=0
+  set foldmethod=manual
+endif

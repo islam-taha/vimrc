@@ -25,6 +25,7 @@ function! ale#list#IsQuickfixOpen() abort
             return 1
         endif
     endfor
+
     return 0
 endfunction
 
@@ -70,8 +71,8 @@ function! s:FixList(buffer, list) abort
     return l:new_list
 endfunction
 
-function! s:BufWinId(buffer) abort
-    return exists('*bufwinid') ? bufwinid(str2nr(a:buffer)) : 0
+function! s:WinFindBuf(buffer) abort
+    return exists('*win_findbuf') ? win_findbuf(str2nr(a:buffer)) : [0]
 endfunction
 
 function! s:SetListsImpl(timer_id, buffer, loclist) abort
@@ -87,17 +88,19 @@ function! s:SetListsImpl(timer_id, buffer, loclist) abort
             call setqflist([], 'r', {'title': l:title})
         endif
     elseif g:ale_set_loclist
-        " If windows support is off, bufwinid() may not exist.
+        " If windows support is off, win_findbuf() may not exist.
         " We'll set result in the current window, which might not be correct,
         " but it's better than nothing.
-        let l:id = s:BufWinId(a:buffer)
+        let l:ids = s:WinFindBuf(a:buffer)
 
-        if has('nvim')
-            call setloclist(l:id, s:FixList(a:buffer, a:loclist), ' ', l:title)
-        else
-            call setloclist(l:id, s:FixList(a:buffer, a:loclist))
-            call setloclist(l:id, [], 'r', {'title': l:title})
-        endif
+        for l:id in l:ids
+            if has('nvim')
+                call setloclist(l:id, s:FixList(a:buffer, a:loclist), ' ', l:title)
+            else
+                call setloclist(l:id, s:FixList(a:buffer, a:loclist))
+                call setloclist(l:id, [], 'r', {'title': l:title})
+            endif
+        endfor
     endif
 
     " Open a window to show the problems if we need to.
@@ -107,14 +110,14 @@ function! s:SetListsImpl(timer_id, buffer, loclist) abort
     if s:ShouldOpen(a:buffer) && !empty(a:loclist)
         let l:winnr = winnr()
         let l:mode = mode()
-        let l:reset_visual_selection = l:mode is? 'v' || l:mode is# "\<c-v>"
-        let l:reset_character_selection = l:mode is? 's' || l:mode is# "\<c-s>"
 
         " open windows vertically instead of default horizontally
         let l:open_type = ''
+
         if ale#Var(a:buffer, 'list_vertical') == 1
-            let l:open_type = 'vert '
+            let l:open_type = 'vert rightbelow '
         endif
+
         if g:ale_set_quickfix
             if !ale#list#IsQuickfixOpen()
                 silent! execute l:open_type . 'copen ' . str2nr(ale#Var(a:buffer, 'list_window_size'))
@@ -128,12 +131,13 @@ function! s:SetListsImpl(timer_id, buffer, loclist) abort
             wincmd p
         endif
 
-        if l:reset_visual_selection || l:reset_character_selection
-            " If we were in a selection mode before, select the last selection.
-            normal! gv
-
-            if l:reset_character_selection
-                " Switch back to Select mode, if we were in that.
+        " Return to original mode when applicable
+        if mode() != l:mode
+            if l:mode is? 'v' || l:mode is# "\<c-v>"
+                " Reset our last visual selection
+                normal! gv
+            elseif l:mode is? 's' || l:mode is# "\<c-s>"
+                " Reset our last character selection
                 normal! "\<c-g>"
             endif
         endif
@@ -178,11 +182,13 @@ function! s:CloseWindowIfNeeded(buffer) abort
                 cclose
             endif
         else
-            let l:win_id = s:BufWinId(a:buffer)
+            let l:win_ids = s:WinFindBuf(a:buffer)
 
-            if g:ale_set_loclist && empty(getloclist(l:win_id))
-                lclose
-            endif
+            for l:win_id in l:win_ids
+                if g:ale_set_loclist && empty(getloclist(l:win_id))
+                    lclose
+                endif
+            endfor
         endif
     " Ignore 'Cannot close last window' errors.
     catch /E444/

@@ -22,7 +22,7 @@ from __future__ import absolute_import
 # Not installing aliases from python-future; it's unreliable and slow.
 from builtins import *  # noqa
 
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 from future.utils import iteritems, PY2
 from mock import DEFAULT, MagicMock, patch
 from hamcrest import assert_that, equal_to
@@ -37,29 +37,30 @@ import sys
 from ycmd.utils import GetCurrentDirectory, ToBytes, ToUnicode
 
 
-BUFNR_REGEX = re.compile( '^bufnr\(\'(?P<buffer_filename>.+)\', ([01])\)$' )
-BUFWINNR_REGEX = re.compile( '^bufwinnr\((?P<buffer_number>[0-9]+)\)$' )
+BUFNR_REGEX = re.compile( '^bufnr\\(\'(?P<buffer_filename>.+)\', ([01])\\)$' )
+BUFWINNR_REGEX = re.compile( '^bufwinnr\\((?P<buffer_number>[0-9]+)\\)$' )
 BWIPEOUT_REGEX = re.compile(
   '^(?:silent! )bwipeout!? (?P<buffer_number>[0-9]+)$' )
 GETBUFVAR_REGEX = re.compile(
-  '^getbufvar\((?P<buffer_number>[0-9]+), "(?P<option>.+)"\)$' )
+  '^getbufvar\\((?P<buffer_number>[0-9]+), "(?P<option>.+)"\\)$' )
 MATCHADD_REGEX = re.compile(
-  '^matchadd\(\'(?P<group>.+)\', \'(?P<pattern>.+)\'\)$' )
-MATCHDELETE_REGEX = re.compile( '^matchdelete\((?P<id>\d+)\)$' )
+  '^matchadd\\(\'(?P<group>.+)\', \'(?P<pattern>.+)\'\\)$' )
+MATCHDELETE_REGEX = re.compile( '^matchdelete\\((?P<id>\\d+)\\)$' )
 OMNIFUNC_REGEX_FORMAT = (
-  '^{omnifunc_name}\((?P<findstart>[01]),[\'"](?P<base>.*)[\'"]\)$' )
-FNAMEESCAPE_REGEX = re.compile( '^fnameescape\(\'(?P<filepath>.+)\'\)$' )
+  '^{omnifunc_name}\\((?P<findstart>[01]),[\'"](?P<base>.*)[\'"]\\)$' )
+FNAMEESCAPE_REGEX = re.compile( '^fnameescape\\(\'(?P<filepath>.+)\'\\)$' )
 SIGN_LIST_REGEX = re.compile(
-  "^silent! sign place buffer=(?P<bufnr>\d+)$" )
+  '^silent! sign place buffer=(?P<bufnr>\\d+)$' )
 SIGN_PLACE_REGEX = re.compile(
-  '^sign place (?P<id>\d+) name=(?P<name>\w+) line=(?P<line>\d+) '
-  'buffer=(?P<bufnr>\d+)$' )
+  '^sign place (?P<id>\\d+) name=(?P<name>\\w+) line=(?P<line>\\d+) '
+  'buffer=(?P<bufnr>\\d+)$' )
 SIGN_UNPLACE_REGEX = re.compile(
-  '^sign unplace (?P<id>\d+) buffer=(?P<bufnr>\d+)$' )
-REDIR_START_REGEX = re.compile( '^redir => (?P<variable>[\w:]+)$' )
+  '^sign unplace (?P<id>\\d+) buffer=(?P<bufnr>\\d+)$' )
+REDIR_START_REGEX = re.compile( '^redir => (?P<variable>[\\w:]+)$' )
 REDIR_END_REGEX = re.compile( '^redir END$' )
-EXISTS_REGEX = re.compile( '^exists\( \'(?P<option>[\w:]+)\' \)$' )
-LET_REGEX = re.compile( '^let (?P<option>[\w:]+) = (?P<value>.*)$' )
+EXISTS_REGEX = re.compile( '^exists\\( \'(?P<option>[\\w:]+)\' \\)$' )
+LET_REGEX = re.compile( '^let (?P<option>[\\w:]+) = (?P<value>.*)$' )
+HAS_PATCH_REGEX = re.compile( '^has\\( \'patch(?P<patch>\\d+)\' \\)$' )
 
 # One-and only instance of mocked Vim object. The first 'import vim' that is
 # executed binds the vim module to the instance of MagicMock that is created,
@@ -82,6 +83,18 @@ VIM_OPTIONS = {
   '&hidden': 0,
   '&expandtab': 1
 }
+
+Version = namedtuple( 'Version', [ 'major', 'minor', 'patch' ] )
+
+# This variable must be patched with a Version object for tests depending on a
+# recent Vim version. Example:
+#
+#   @patch( 'ycm.tests.test_utils.VIM_VERSION', Version( 8, 1, 614 ) )
+#   def ThisTestDependsOnTheVimVersion_test():
+#     ...
+#
+# Default is the oldest supported version.
+VIM_VERSION = Version( 7, 4, 1578 )
 
 REDIR = {
   'status': False,
@@ -165,6 +178,14 @@ def _MockVimBufferEval( value ):
   return None
 
 
+def _MockVimWindowEval( value ):
+  if value == 'winnr("#")':
+    # For simplicity, we always assume there is no previous window.
+    return 0
+
+  return None
+
+
 def _MockVimOptionsEval( value ):
   result = VIM_OPTIONS.get( value )
   if result is not None:
@@ -225,6 +246,21 @@ def _MockVimMatchEval( value ):
   return None
 
 
+def _MockVimVersionEval( value ):
+  match = HAS_PATCH_REGEX.search( value )
+  if match:
+    if not isinstance( VIM_VERSION, Version ):
+      raise RuntimeError( 'Vim version is not set.' )
+    return VIM_VERSION.patch >= int( match.group( 'patch' ) )
+
+  if value == 'v:version':
+    if not isinstance( VIM_VERSION, Version ):
+      raise RuntimeError( 'Vim version is not set.' )
+    return VIM_VERSION.major * 100 + VIM_VERSION.minor
+
+  return None
+
+
 def _MockVimEval( value ):
   result = _MockVimOptionsEval( value )
   if result is not None:
@@ -238,7 +274,15 @@ def _MockVimEval( value ):
   if result is not None:
     return result
 
+  result = _MockVimWindowEval( value )
+  if result is not None:
+    return result
+
   result = _MockVimMatchEval( value )
+  if result is not None:
+    return result
+
+  result = _MockVimVersionEval( value )
   if result is not None:
     return result
 
@@ -268,10 +312,12 @@ def _MockSignCommand( command ):
                           'Signs for foo:\n' )
     for sign in VIM_SIGNS:
       if sign.bufnr == bufnr:
-        REDIR[ 'output' ] += (
-          '    line={0}  id={1}  name={2}'.format( sign.line,
-                                                   sign.id,
-                                                   sign.name ) )
+        if VIM_VERSION >= Version( 8, 1, 614 ):
+          # 10 is the default priority.
+          line_output = '    line={}  id={}  name={} priority=10'
+        else:
+          line_output = '    line={}  id={}  name={}'
+        REDIR[ 'output' ] += line_output.format( sign.line, sign.id, sign.name )
     return True
 
   match = SIGN_PLACE_REGEX.search( command )
@@ -434,6 +480,7 @@ class VimWindow( object ):
     self.number = number
     self.buffer = buffer_object
     self.cursor = cursor
+    self.options = {}
 
 
 class VimWindows( object ):
@@ -452,10 +499,10 @@ class VimWindows( object ):
 
   def __getitem__( self, number ):
     """Emulates vim.windows[ number ]"""
-    for window in self._windows:
-      if number == window.number:
-        return window
-    raise KeyError( number )
+    try:
+      return self._windows[ number ]
+    except IndexError:
+      raise IndexError( 'no such window' )
 
 
   def __iter__( self ):
@@ -548,7 +595,7 @@ def MockVimBuffers( buffers, window_buffers, cursor_position = ( 1, 1 ) ):
   with patch( 'vim.buffers', VimBuffers( buffers ) ):
     with patch( 'vim.windows', VimWindows( window_buffers,
                                            cursor_position ) ) as windows:
-      with patch( 'vim.current', VimCurrent( windows[ 1 ] ) ):
+      with patch( 'vim.current', VimCurrent( windows[ 0 ] ) ):
         yield VIM_MOCK
 
 

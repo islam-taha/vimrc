@@ -114,9 +114,9 @@ au FileType mako vmap Si S"i${ _(<esc>2f"a) }<esc>
 " let g:lightline = {
 "       \ 'colorscheme': 'wombat',
 "       \ }
-
+let g:dracula_italic = 0
 let g:lightline = {
-      \ 'colorscheme': 'one',
+      \ 'colorscheme': 'Tomorrow_Night',
       \ 'active': {
       \   'left': [ ['mode', 'paste'],
       \             ['fugitive', 'readonly', 'absolutepath', 'modified'] ],
@@ -132,9 +132,13 @@ let g:lightline = {
       \   'modified': '(&filetype!="help"&&(&modified||!&modifiable))',
       \   'fugitive': '(exists("*fugitive#head") && ""!=fugitive#head())'
       \ },
-      \ 'separator': { 'left': "\u2b80", 'right': "\u2b82" },
-      \ 'subseparator': { 'left': "\u2b81", 'right': "\u2b83" }
+      \ 'separator': { 'left': '', 'right': '' } ,
+      \ 'subseparator': { 'left': '', 'right': '' }
       \ }
+" tmux_conf_theme_left_separator_main=''  # /!\ you don't need to install Powerline
+" tmux_conf_theme_left_separator_sub=''   #   you only need fonts patched with
+" tmux_conf_theme_right_separator_main='' #   Powerline symbols or the standalone
+" tmux_conf_theme_right_separator_sub=''  #   PowerlineSymbols.otf font
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Vimroom
@@ -159,12 +163,11 @@ let g:go_fmt_command = "goimports"
 let g:ale_fixers = {
 \   'javascript': ['eslint'],
 \   'typescript': ['tslint'],
-\   'ruby': ['rubocop'],
-\   'elixir': ['mix_format']
+\   'elixir':     ['mix_format']
 \}
 
-" Set this setting in vimrc if you want to fix files automatically on save.
-" This is off by default.
+" " " Set this setting in vimrc if you want to fix files automatically on save.
+" " " This is off by default.
 let g:ale_sign_warning = '▲'
 let g:ale_sign_error = '✗'
 let g:ale_fix_on_save = 0
@@ -176,4 +179,27 @@ let g:ale_completion_enabled = 1
 let g:gitgutter_enabled=0
 nnoremap <silent> <leader>d :GitGutterToggle<cr>
 
-let g:ycm_min_num_of_chars_for_completion = 2
+let g:ycm_min_num_of_chars_for_completion = 3
+let g:ycm_auto_trigger_delay=0.4
+let g:airline_powerline_fonts = 1
+
+let g:vue_disable_pre_processors=1
+
+"""""""""""""""""""""""""""""""""""""""
+" => async completer
+"""""""""""""""""""""""""""""""""""""""
+" let g:deoplete#enable_at_startup = 1
+
+" let g:EclimCompletionMethod = 'omnifunc'
+let g:javascript_plugin_jsdoc = 1
+let java_highlight_functions = 1
+let java_highlight_all = 1
+" If you are trying this at runtime, you need to reload the syntax file
+set filetype=java
+
+" Some more highlights, in addition to those suggested by cmcginty
+highlight link javaScopeDecl Statement
+highlight link javaType Type
+highlight link javaDocTags PreProc
+
+syn region javaFuncDef start=+^\s\+\(\(public\|protected\|private\|static\|abstract\|final\|native\|synchronized\)\s\+\)*\(\(void\|boolean\|char\|byte\|short\|int\|long\|float\|double\|\([A-Za-z_][A-Za-z0-9_$]*\.\)*[A-Z][A-Za-z0-9_$]*\)\(<[^>]*>\)\=\(\[\]\)*\s\+[a-z][A-Za-z0-9_$]*\|[A-Z][A-Za-z0-9_$]*\)\s*\ze(+ end=+\ze(+ contains=javaScopeDecl,javaType,javaStorageClass,javaComment,javaLineComment,@javaClasses

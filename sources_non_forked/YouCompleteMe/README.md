@@ -16,8 +16,8 @@ First carefully read the [installation instructions](#installation) for your OS.
 We recommend you use the supplied `install.py`.
 
 Next check the [User Guide](#user-guide) section on the semantic completer that
-you are using. For C/C++/Objective C, you  _must_ read
-[this section](#c-family-semantic-completion).
+you are using. For C/C++/Objective-C/Objective-C++/CUDA, you  _must_ read [this
+section](#c-family-semantic-completion).
 
 Finally, check the [FAQ](#faq).
 
@@ -34,8 +34,7 @@ Contents
 - [Intro](#intro)
 - [Installation](#installation)
     - [Mac OS X](#mac-os-x)
-    - [Ubuntu Linux x64](#ubuntu-linux-x64)
-    - [Fedora Linux x64](#fedora-linux-x64)
+    - [Linux 64-bit](#linux-64-bit)
     - [Windows](#windows)
     - [FreeBSD/OpenBSD](#freebsdopenbsd)
     - [Full Installation Guide](#full-installation-guide)
@@ -77,9 +76,9 @@ YouCompleteMe is a fast, as-you-type, fuzzy-search code completion engine for
 
 - an identifier-based engine that works with every programming language,
 - a [Clang][]-based engine that provides native semantic code
-  completion for C/C++/Objective-C/Objective-C++ (from now on referred to as
-  "the C-family languages"),
-- a [Jedi][]-based completion engine for Python 2 and 3 (using the [JediHTTP][] wrapper),
+  completion for C/C++/Objective-C/Objective-C++/CUDA (from now on referred to
+  as "the C-family languages"),
+- a [Jedi][]-based completion engine for Python 2 and 3,
 - an [OmniSharp][]-based completion engine for C#,
 - a combination of [Gocode][] and [Godef][] semantic engines for Go,
 - a [TSServer][]-based completion engine for JavaScript and TypeScript,
@@ -211,15 +210,15 @@ The following additional language support options are available:
 
 - C# support: install Mono with [Homebrew][brew] or by downloading the [Mono Mac
   package][mono-install-osx] and add `--cs-completer` when calling
-  `./install.py`.
+  `install.py`.
 - Go support: install [Go][go-install] and add `--go-completer` when calling
-  `./install.py`.
-- JavaScript and TypeScript support: install [Node.js and npm][npm-install] then
-  install the TypeScript SDK with `npm install -g typescript`.
+  `install.py`.
+- JavaScript and TypeScript support: install [Node.js and npm][npm-install] and
+  add `--ts-completer` when calling `install.py`.
 - Rust support: install [Rust][rust-install] and add
-  `--rust-completer` when calling `./install.py`.
+  `--rust-completer` when calling `install.py`.
 - Java support: install [JDK8 (version 8 required)][jdk-install] and add
-  `--java-completer` when calling `./install.py`.
+  `--java-completer` when calling `install.py`.
 
 To simply compile with everything enabled, there's a `--all` flag.  So, to
 install with all language features, ensure `xbuild`, `go`, `tsserver`, `node`,
@@ -238,60 +237,61 @@ YCM comes with sane defaults for its options, but you still may want to take a
 look at what's available for configuration. There are a few interesting options
 that are conservatively turned off by default that you may want to turn on.
 
-### Ubuntu Linux x64
+### Linux 64-bit
 
 These instructions (using `install.py`) are the quickest way to install
 YouCompleteMe, however they may not work for everyone. If the following
 instructions don't work for you, check out the [full installation
 guide](#full-installation-guide).
 
-Make sure you have Vim 7.4.1578 with Python 2 or Python 3 support. Ubuntu 16.04
-and later have a Vim that's recent enough. You can see the version of Vim
-installed by running `vim --version`. If the version is too old, you may need to
-[compile Vim from source][vim-build] (don't worry, it's easy).
+Make sure you have Vim 7.4.1578 with Python 2 or Python 3 support. The Vim
+package on Fedora 27 and later and the pre-installed Vim on Ubuntu 16.04 and
+later are recent enough. You can see the version of Vim installed by running
+`vim --version`. If the version is too old, you may need to [compile Vim from
+source][vim-build] (don't worry, it's easy).
 
 Install YouCompleteMe with [Vundle][].
 
 **Remember:** YCM is a plugin with a compiled component. If you **update** YCM
-using Vundle and the ycm_core library APIs have changed (happens
-rarely), YCM will notify you to recompile it. You should then rerun the install
-process.
+using Vundle and the ycm_core library APIs have changed (happens rarely), YCM
+will notify you to recompile it. You should then rerun the install process.
 
-Install development tools and CMake:
+Install development tools, CMake, and Python headers:
 
-    sudo apt-get install build-essential cmake
+- Fedora 27 and later:
 
-**Note:** On older systems (e.g. Ubuntu 14.04) you may run into compilation
-issues with `cmake`. Therefore, install the following instead:
+      sudo dnf install cmake gcc-c++ make python3-devel
 
-    sudo apt-get install build-essential cmake3
+- Ubuntu 14.04:
 
-Make sure you have Python headers installed:
+      sudo apt install build-essential cmake3 python3-dev
 
-    sudo apt-get install python-dev python3-dev
+- Ubuntu 16.04 and later:
+
+      sudo apt install build-essential cmake python3-dev
 
 Compiling YCM **with** semantic support for C-family languages:
 
     cd ~/.vim/bundle/YouCompleteMe
-    ./install.py --clang-completer
+    python3 install.py --clang-completer
 
 Compiling YCM **without** semantic support for C-family languages:
 
     cd ~/.vim/bundle/YouCompleteMe
-    ./install.py
+    python3 install.py
 
 The following additional language support options are available:
 
-- C# support: install [Mono][mono-install-ubuntu] and add `--cs-completer`
-  when calling `./install.py`.
+- C# support: install [Mono][mono-install-linux] and add `--cs-completer`
+  when calling `install.py`.
 - Go support: install [Go][go-install] and add `--go-completer` when calling
-  `./install.py`.
-- JavaScript and TypeScript support: install [Node.js and npm][npm-install] then
-  install the TypeScript SDK with `npm install -g typescript`.
+  `install.py`.
+- JavaScript and TypeScript support: install [Node.js and npm][npm-install] and
+  add `--ts-completer` when calling `install.py`.
 - Rust support: install [Rust][rust-install] and add `--rust-completer` when
-  calling `./install.py`.
+  calling `install.py`.
 - Java support: install [JDK8 (version 8 required)][jdk-install] and add
-  `--java-completer` when calling `./install.py`.
+  `--java-completer` when calling `install.py`.
 
 To simply compile with everything enabled, there's a `--all` flag.  So, to
 install with all language features, ensure `xbuild`, `go`, `tsserver`, `node`,
@@ -299,74 +299,7 @@ install with all language features, ensure `xbuild`, `go`, `tsserver`, `node`,
 simply run:
 
     cd ~/.vim/bundle/YouCompleteMe
-    ./install.py --all
-
-That's it. You're done. Refer to the _User Guide_ section on how to use YCM.
-Don't forget that if you want the C-family semantic completion engine to work,
-you will need to provide the compilation flags for your project to YCM. It's all
-in the User Guide.
-
-YCM comes with sane defaults for its options, but you still may want to take a
-look at what's available for configuration. There are a few interesting options
-that are conservatively turned off by default that you may want to turn on.
-
-### Fedora Linux x64
-
-These instructions (using `install.py`) are the quickest way to install
-YouCompleteMe, however they may not work for everyone. If the following
-instructions don't work for you, check out the [full installation
-guide](#full-installation-guide).
-
-Make sure you have Vim 7.4.1578 with Python 2 or Python 3 support. Fedora 21 and
-later have a Vim that's recent enough. You can see the version of Vim installed
-by running `vim --version`. If the version is too old, you may need to [compile
-Vim from source][vim-build] (don't worry, it's easy).
-
-Install YouCompleteMe with [Vundle][].
-
-**Remember:** YCM is a plugin with a compiled component. If you **update** YCM
-using Vundle and the ycm_core library APIs have changed (happens
-rarely), YCM will notify you to recompile it. You should then rerun the install
-process.
-
-Install development tools and CMake:
-
-    sudo dnf install automake gcc gcc-c++ kernel-devel cmake
-
-Make sure you have Python headers installed:
-
-    sudo dnf install python-devel python3-devel
-
-Compiling YCM **with** semantic support for C-family languages:
-
-    cd ~/.vim/bundle/YouCompleteMe
-    ./install.py --clang-completer
-
-Compiling YCM **without** semantic support for C-family languages:
-
-    cd ~/.vim/bundle/YouCompleteMe
-    ./install.py
-
-The following additional language support options are available:
-
-- C# support: install [Mono][mono-install-fedora] and add `--cs-completer`
-  when calling `./install.py`.
-- Go support: install [Go][go-install] and add `--go-completer` when calling
-  `./install.py`.
-- JavaScript and TypeScript support: install [Node.js and npm][npm-install] then
-  install the TypeScript SDK with `npm install -g typescript`.
-- Rust support: install [Rust][rust-install] and add `--rust-completer` when
-  calling `./install.py`.
-- Java support: install [JDK8 (version 8 required)][jdk-install] and add
-  `--java-completer` when calling `./install.py`.
-
-To simply compile with everything enabled, there's a `--all` flag.  So, to
-install with all language features, ensure `xbuild`, `go`, `tsserver`, `node`,
-`npm`, `rustc`, and `cargo` tools are installed and in your `PATH`, then
-simply run:
-
-    cd ~/.vim/bundle/YouCompleteMe
-    ./install.py --all
+    python3 install.py --all
 
 That's it. You're done. Refer to the _User Guide_ section on how to use YCM.
 Don't forget that if you want the C-family semantic completion engine to work,
@@ -392,7 +325,7 @@ can check the version and which Python is supported by typing `:version` inside
 Vim. Look at the features included: `+python/dyn` for Python 2 and
 `+python3/dyn` for Python 3. Take note of the Vim architecture, i.e. 32 or
 64-bit. It will be important when choosing the Python installer. We recommend
-using a 64-bit client. [Daily updated copies of 32-bit and 64-bit Vim with
+using a 64-bit client. [Daily updated installers of 32-bit and 64-bit Vim with
 Python 2 and Python 3 support][vim-win-download] are available.
 
 Add the line:
@@ -424,9 +357,9 @@ Download and install the following software:
   Python 3.5. You'll need one or the other installed, matching the version
   number exactly.
 - [CMake][cmake-download]. Add CMake executable to the PATH environment
-variable.
+  variable.
 - [Visual Studio][visual-studio-download]. Download the community edition.
-During setup, select _Desktop development with C++_ in _Workloads_.
+  During setup, select _Desktop development with C++_ in _Workloads_.
 
 Compiling YCM **with** semantic support for C-family languages:
 
@@ -444,12 +377,12 @@ The following additional language support options are available:
   Be sure that [the build utility `msbuild` is in your PATH][add-msbuild-to-path].
 - Go support: install [Go][go-install] and add `--go-completer` when calling
   `install.py`.
-- JavaScript and TypeScript support: install [Node.js and npm][npm-install] then
-  install the TypeScript SDK with `npm install -g typescript`.
+- JavaScript and TypeScript support: install [Node.js and npm][npm-install] and
+  add `--ts-completer` when calling `install.py`.
 - Rust support: install [Rust][rust-install] and add `--rust-completer` when
   calling `install.py`.
 - Java support: install [JDK8 (version 8 required)][jdk-install] and add
-  `--java-completer` when calling `./install.py`.
+  `--java-completer` when calling `install.py`.
 
 To simply compile with everything enabled, there's a `--all` flag.  So, to
 install with all language features, ensure `msbuild`, `go`, `tsserver`, `node`,
@@ -516,8 +449,8 @@ The following additional language support options are available:
   `./install.py`.
 - Go support: install [Go][go-install] and add `--go-completer` when calling
   `./install.py`.
-- JavaScript and TypeScript support: install [Node.js and npm][npm-install] then
-  install the TypeScript SDK with `npm install -g typescript`.
+- JavaScript and TypeScript support: install [Node.js and npm][npm-install] and
+  add `--ts-completer` when calling `install.py`.
 - Rust support: install [Rust][rust-install] and add `--rust-completer` when
   calling `./install.py`.
 - Java support: install [JDK8 (version 8 required)][jdk-install] and add
@@ -590,12 +523,11 @@ process.
     C-family languages. Otherwise it's not necessary.*
 
     **Download the latest version of `libclang`**. Clang is an open-source
-    compiler that can compile C/C++/Objective-C/Objective-C++. The `libclang`
-    library it provides is used to power the YCM semantic completion engine for
-    those languages. YCM is designed to work with libclang version 3.9 or
-    higher.
+    compiler that can compile C-family languages. The `libclang` library it
+    provides is used to power the YCM semantic completion engine for those
+    languages. YCM is designed to work with libclang version 7.0.0 or higher.
 
-    You can use the system libclang _only if you are sure it is version 3.9 or
+    You can use the system libclang _only if you are sure it is version 7.0.0 or
     higher_, otherwise don't. Even if it is, we recommend using the [official
     binaries from llvm.org][clang-download] if at all possible. Make sure you
     download the correct archive file for your OS.
@@ -727,9 +659,9 @@ process.
     - Go support: install [Go][go-install] and add it to your path. Navigate to
       `YouCompleteMe/third_party/ycmd/third_party/gocode` and run `go build`.
 
-    - JavaScript and TypeScript support: as with the quick installation, simply
-      `npm install -g typescript` after successfully installing [Node.js and
-      npm][npm-install].
+    - JavaScript and TypeScript support: install [Node.js and npm][npm-install],
+      navigate to `YouCompleteMe/third_party/ycmd` and run
+      `npm install -g --prefix third_party/tsserver typescript`.
 
     - Rust support: install [Rust][rust-install]. Navigate to
       `YouCompleteMe/third_party/ycmd/third_party/racerd` and run `cargo build
@@ -762,31 +694,32 @@ Quick Feature Summary
 * Suggestions from Vim's OmniFunc
 * UltiSnips snippet suggestions
 
-### C-family languages (C, C++, Objective C, Objective C++)
+### C-family languages (C, C++, Objective C, Objective C++, CUDA)
 
-* Semantic auto-completion
+* Semantic auto-completion with automatic fixes
 * Real-time diagnostic display
 * Go to include/declaration/definition (`GoTo`, etc.)
-* Semantic type information for identifiers (`GetType`)
-* Automatically fix certain errors (`FixIt`)
 * View documentation comments for identifiers (`GetDoc`)
+* Type information for identifiers (`GetType`)
+* Automatically fix certain errors (`FixIt`)
 
 ### C♯
 
 * Semantic auto-completion
 * Real-time diagnostic display
 * Go to declaration/definition (`GoTo`, etc.)
-* Semantic type information for identifiers (`GetType`)
+* View documentation comments for identifiers (`GetDoc`)
+* Type information for identifiers (`GetType`)
 * Automatically fix certain errors (`FixIt`)
 * Management of OmniSharp server instance
-* View documentation comments for identifiers (`GetDoc`)
 
 ### Python
 
-* Intelligent auto-completion
-* Go to declaration/definition, find references (`GoTo`, `GoToReferences`)
+* Semantic auto-completion
+* Go to definition (`GoTo`)
+* Reference finding (`GoToReferences`)
 * View documentation comments for identifiers (`GetDoc`)
-* Restart [JediHTTP][] server using a different Python interpreter
+* Type information for identifiers (`GetType`)
 
 ### Go
 
@@ -797,15 +730,15 @@ Quick Feature Summary
 ### JavaScript and TypeScript
 
 * Semantic auto-completion with automatic import insertion
+* Real-time diagnostic display
 * Go to definition (`GoTo`, `GoToDefinition`, and `GoToDeclaration` are
   identical)
 * Go to type definition (`GoToType`)
 * Reference finding (`GoToReferences`)
-* Real-time diagnostic display
-* Renaming symbols (`RefactorRename <new name>`)
 * View documentation comments for identifiers (`GetDoc`)
 * Type information for identifiers (`GetType`)
 * Automatically fix certain errors (`FixIt`)
+* Renaming symbols (`RefactorRename <new name>`)
 * Code formatting (`Format`)
 * Organize imports (`OrganizeImports`)
 * Management of `TSServer` server instance
@@ -815,8 +748,8 @@ Quick Feature Summary
 * Semantic auto-completion
 * Go to definition (`GoTo`, `GoToDefinition`, and `GoToDeclaration` are
   identical)
-* Management of `racer` server instance
 * View documentation comments for identifiers (`GetDoc`)
+* Management of `racer` server instance
 
 ### Java
 
@@ -824,14 +757,14 @@ Quick Feature Summary
 [feedback](#contact).
 
 * Semantic auto-completion with automatic import insertion
+* Real-time diagnostic display
 * Go to definition (`GoTo`, `GoToDefinition`, and `GoToDeclaration` are
   identical)
 * Reference finding (`GoToReferences`)
-* Real-time diagnostic display
-* Renaming symbols (`RefactorRename <new name>`)
 * View documentation comments for identifiers (`GetDoc`)
 * Type information for identifiers (`GetType`)
-* Automatically fix certain errors including code generation  (`FixIt`)
+* Automatically fix certain errors including code generation (`FixIt`)
+* Renaming symbols (`RefactorRename <new name>`)
 * Code formatting (`Format`)
 * Organize imports (`OrganizeImports`)
 * Detection of java projects
@@ -1053,8 +986,8 @@ it is not uncommon to integrate directly with an existing build system using the
 full power of the Python language.
 
 For a more elaborate example,
-[see YCM's own `.ycm_extra_conf.py`][flags_example]. You should be able to use
-it _as a starting point_. **Don't** just copy/paste that file somewhere and
+[see ycmd's own `.ycm_extra_conf.py`][ycmd_flags_example]. You should be able to
+use it _as a starting point_. **Don't** just copy/paste that file somewhere and
 expect things to magically work; **your project needs different flags**. Hint:
 just replace the strings in the `flags` variable with compilation flags
 necessary for your project. That should be enough for 99% of projects.
@@ -1213,31 +1146,117 @@ present so we'd love to hear your feedback! Please do remember to check
 
 ### Python Semantic Completion
 
-Completion and GoTo commands work out of the box with no additional
-configuration. Those features are provided by the [jedi][] library which
-supports a variety of Python versions (2.6, 2.7, 3.2+) as long as it
-runs in the corresponding Python interpreter. By default YCM runs [jedi][] with
-the same Python interpreter used by the [ycmd server][ycmd], so if you would like to
-use a different interpreter, use the following option specifying the Python
-binary to use. For example, to provide Python 3 completion in your project, set:
+YCM relies on the [Jedi][] engine to provide completion and code navigation. By
+default, it will pick the version of Python running the [ycmd server][ycmd] and
+use its `sys.path`. While this is fine for simple projects, this needs to be
+configurable when working with virtual environments or in a project with
+third-party packages. The next sections explain how to do that.
 
-```viml
-let g:ycm_python_binary_path = '/usr/bin/python3'
+#### Working with virtual environments
+
+A common practice when working on a Python project is to install its
+dependencies in a virtual environment and develop the project inside that
+environment. To support this, YCM needs to know the interpreter path of the
+virtual environment. You can specify it by creating a `.ycm_extra_conf.py` file
+at the root of your project with the following contents:
+
+```python
+def Settings( **kwargs ):
+  return {
+    'interpreter_path': '/path/to/virtual/environment/python'
+  }
 ```
 
-If the value of `g:ycm_python_binary_path` is an absolute path like above it
-will be used as-is, but if it's an executable name it will be searched through
-the PATH. So for example if you set:
+where `/path/to/virtual/environment/python` is the path to the Python used
+by the virtual environment you are working in. Typically, the executable can be
+found in the `Scripts` folder of the virtual environment directory on Windows
+and in the `bin` folder on other platforms.
 
-```viml
-let g:ycm_python_binary_path = 'python'
+If you don't like having to create a `.ycm_extra_conf.py` file at the root of
+your project and would prefer to specify the interpreter path with a Vim option,
+read the [Configuring through Vim options](#configuring-through-vim-options)
+section.
+
+#### Working with third-party packages
+
+Another common practice is to put the dependencies directly into the project and
+add their paths to `sys.path` at runtime in order to import them. YCM needs to
+be told about this path manipulation to support those dependencies. This can be
+done by creating a `.ycm_extra_conf.py` file at the root of the project. This
+file must define a `Settings( **kwargs )` function returning a dictionary with
+the list of paths to prepend to `sys.path` under the `sys_path` key. For
+instance, the following `.ycm_extra_conf.py`
+
+```python
+def Settings( **kwargs ):
+  return {
+    'sys_path': [
+      '/path/to/some/third_party/package',
+      '/path/to/another/third_party/package'
+    ]
+  }
 ```
 
-YCM will use the first `python` executable it finds in the PATH to run
-[jedi][]. This means that if you are in a virtual environment and you start vim
-in that directory, the first `python` that YCM will find will be the one in the
-virtual environment, so [jedi][] will be able to provide completions for every
-package you have in the virtual environment.
+adds the paths `/path/to/some/third_party/package` and
+`/path/to/another/third_party/package` at the start of `sys.path`.
+
+If you would rather prepend paths to `sys.path` with a Vim option, read the
+[Configuring through Vim options](#configuring-through-vim-options) section.
+
+If you need further control on how to add paths to `sys.path`, you should define
+the `PythonSysPath( **kwargs )` function in the `.ycm_extra_conf.py` file. Its
+keyword arguments are `sys_path` which contains the default `sys.path`, and
+`interpreter_path` which is the path to the Python interpreter. Here's a trivial
+example that insert the `/path/to/third_party/package` path at the second
+position of `sys.path`:
+
+```python
+def PythonSysPath( **kwargs ):
+  sys_path = kwargs[ 'sys_path' ]
+  sys_path.insert( 1, '/path/to/third_party/package' )
+  return sys_path
+```
+
+A more advanced example can be found in [YCM's own
+`.ycm_extra_conf.py`][ycm_flags_example].
+
+#### Configuring through Vim options
+
+You may find inconvenient to have to create a `.ycm_extra_conf.py` file at the
+root of each one of your projects in order to set the path to the Python
+interpreter and/or add paths to `sys.path` and would prefer to be able to
+configure those through Vim options. Don't worry, this is possible by using the
+[`g:ycm_extra_conf_vim_data`](#the-gycm_extra_conf_vim_data-option) option and
+creating a global extra configuration file. Let's take an example. Suppose that
+you want to set the interpreter path with the `g:ycm_python_interpreter_path`
+option and prepend paths to `sys.path` with the `g:ycm_python_sys_path` option.
+Suppose also that you want to name the global extra configuration file
+`global_extra_conf.py` and that you want to put it in your HOME folder. You
+should then add the following lines to your vimrc:
+
+```viml
+let g:ycm_python_interpreter_path = ''
+let g:ycm_python_sys_path = []
+let g:ycm_extra_conf_vim_data = [
+  \  'g:ycm_python_interpreter_path',
+  \  'g:ycm_python_sys_path'
+  \]
+let g:ycm_global_ycm_extra_conf = '~/global_extra_conf.py'
+```
+
+and create the `~/global_extra_conf.py` file with the following contents:
+
+```python
+def Settings( **kwargs ):
+  client_data = kwargs[ 'client_data' ]
+  return {
+    'interpreter_path': client_data[ 'g:ycm_python_interpreter_path' ],
+    'sys_path': client_data[ 'g:ycm_python_sys_path' ]
+  }
+```
+
+That's it. You are done. Note that you don't need to restart the server when
+setting one of the options. YCM will automatically pick the new values.
 
 ### Rust Semantic Completion
 
@@ -1272,11 +1291,10 @@ installation. Further instructions on how to setup YCM with [Tern][] are
 available on [the wiki][tern-instructions].
 
 All JavaScript and TypeScript features are provided by the [TSServer][] engine,
-which is included in the TypeScript SDK. To get the SDK, install [Node.js and
-npm][npm-install] and run the command:
-```
-npm install -g typescript
-```
+which is included in the TypeScript SDK. To enable these features, install
+[Node.js and npm][npm-install] and call the `install.py` script with the
+`--ts-completer` flag.
+
 [TSServer][] relies on [the `jsconfig.json` file][jsconfig.json] for JavaScript
 and [the `tsconfig.json` file][tsconfig.json] for TypeScript to analyze your
 project. Ensure the file exists at the root of your project.
@@ -1290,11 +1308,6 @@ To get diagnostics in JavaScript, set the `checkJs` option to `true` in your
     }
 }
 ```
-
-TypeScript 2.8.1 or later is recommended. Some features will be missing on older
-versions. You can check which version you are currently using by looking at the
-output of [`:YcmDebugInfo` ](#the-ycmdebuginfo-command). If the version is
-`None`, your TypeScript is too old and should be updated.
 
 ### Semantic Completion for Other Languages
 
@@ -1408,8 +1421,15 @@ You can also style the line that has the warning/error with these groups:
 - `YcmWarningLine`, which falls back to group `SyntasticWarningLine` if it
   exists
 
-Note that the line highlighting groups only work when gutter signs are turned
-on.
+Note that the line highlighting groups only work when the
+[`g:ycm_enable_diagnostic_signs`](#the-gycm_enable_diagnostic_signs-option)
+option is set. If you want highlighted lines but no signs in the Vim gutter,
+ensure that your Vim version is 7.4.2201 or later and set the `signcolumn`
+option to `off` in your vimrc:
+
+```viml
+set signcolumn=off
+```
 
 The syntax groups used to highlight regions of text with errors/warnings:
 - `YcmErrorSection`, which falls back to group `SyntasticError` if it exists and
@@ -1487,18 +1507,13 @@ This command gives access to a number of additional [IDE-like
 features](#quick-feature-summary) in YCM, for things like semantic GoTo, type
 information, FixIt and refactoring.
 
-Technically the command invokes completer-specific commands.  If the first
-argument is of the form `ft=...` the completer for that file type will be used
-(for example `ft=cpp`), else the native completer of the current buffer will be
-used.
+This command accepts a range that can either be specified through a selection in
+one of Vim's visual modes (see `:h visual-use`) or on the command line. For
+instance, `:2,5YcmCompleter` will apply the command from line 2 to line 5. This
+is useful for [the `Format` subcommand](#the-format-subcommand).
 
-This command also accepts a range that can either be specified through a
-selection in one of Vim's visual modes (see `:h visual-use`) or on the command
-line. For instance, `:2,5YcmCompleter` will apply the command from line 2 to
-line 5. This is useful for [the `Format` subcommand](#the-format-subcommand).
-
-Call `YcmCompleter` without further arguments for a list of the
-commands you can call for the current completer.
+Call `YcmCompleter` without further arguments for a list of the commands you can
+call for the current completer.
 
 See the [file type feature summary](#quick-feature-summary) for an overview of
 the features available for each file type. See the _YcmCompleter subcommands_
@@ -1513,8 +1528,8 @@ section.
 The invoked subcommand is automatically routed to the currently active semantic
 completer, so `:YcmCompleter GoToDefinition` will invoke the `GoToDefinition`
 subcommand on the Python semantic completer if the currently active file is a
-Python one and on the Clang completer if the currently active file is a
-C/C++/Objective-C one.
+Python one and on the Clang completer if the currently active file is a C-family
+language one.
 
 You may also want to map the subcommands to something less verbose; for
 instance, `nnoremap <leader>jd :YcmCompleter GoTo<CR>`
@@ -1562,7 +1577,7 @@ This command tries to perform the "most sensible" GoTo operation it can.
 Currently, this means that it tries to look up the symbol under the cursor and
 jumps to its definition if possible; if the definition is not accessible from
 the current translation unit, jumps to the symbol's declaration. For
-C/C++/Objective-C, it first tries to look up the current line for a header and
+C-family languages, it first tries to look up the current line for a header and
 jump to it. For C#, implementations are also considered and preferred.
 
 Supported in filetypes: `c, cpp, objc, objcpp, cuda, cs, go, java, javascript,
@@ -1633,7 +1648,7 @@ Invoking this command on `s` returns `std::string => std::basic_string<char>`
 **NOTE:** Causes re-parsing of the current translation unit.
 
 Supported in filetypes: `c, cpp, objc, objcpp, cuda, java, javascript,
-typescript`
+python, typescript`
 
 #### The `GetTypeImprecise` subcommand
 
@@ -1815,14 +1830,7 @@ flags.
 Restarts the semantic-engine-as-localhost-server for those semantic engines that
 work as separate servers that YCM talks to.
 
-An additional optional argument may be supplied for Python, specifying the
-python binary to use to restart the Python semantic engine.
-
-```viml
-:YcmCompleter RestartServer /usr/bin/python3.4
-```
-
-Supported in filetypes: `cs, go, java, javascript, python, rust, typescript`
+Supported in filetypes: `cs, go, java, javascript, rust, typescript`
 
 #### The `ClearCompilationFlagCache` subcommand
 
@@ -2045,10 +2053,10 @@ semantic engine will operate in them.
 
 You can get the filetype of the current file in Vim with `:set ft?`.
 
-Default: `{'*' : 1}`
+Default: `{'*': 1}`
 
 ```viml
-let g:ycm_filetype_whitelist = { '*': 1 }
+let g:ycm_filetype_whitelist = {'*': 1}
 ```
 
 ### The `g:ycm_filetype_blacklist` option
@@ -2064,16 +2072,16 @@ Default: `[see next line]`
 
 ```viml
 let g:ycm_filetype_blacklist = {
-      \ 'tagbar' : 1,
-      \ 'qf' : 1,
-      \ 'notes' : 1,
-      \ 'markdown' : 1,
-      \ 'unite' : 1,
-      \ 'text' : 1,
-      \ 'vimwiki' : 1,
-      \ 'pandoc' : 1,
-      \ 'infolog' : 1,
-      \ 'mail' : 1
+      \ 'tagbar': 1,
+      \ 'qf': 1,
+      \ 'notes': 1,
+      \ 'markdown': 1,
+      \ 'unite': 1,
+      \ 'text': 1,
+      \ 'vimwiki': 1,
+      \ 'pandoc': 1,
+      \ 'infolog': 1,
+      \ 'mail': 1
       \}
 ```
 
@@ -2111,7 +2119,7 @@ being filetype strings (like `python`, `cpp`, etc.) and values being unimportant
 The `*` key is special and matches all filetypes. Use this key if you want to
 completely disable filepath completion:
 ```viml
-let g:ycm_filepath_blacklist = { '*': 1 }
+let g:ycm_filepath_blacklist = {'*': 1}
 ```
 
 You can get the filetype of the current file in Vim with `:set ft?`.
@@ -2120,9 +2128,9 @@ Default: `[see next line]`
 
 ```viml
 let g:ycm_filepath_blacklist = {
-      \ 'html' : 1,
-      \ 'jsx' : 1,
-      \ 'xml' : 1,
+      \ 'html': 1,
+      \ 'jsx': 1,
+      \ 'xml': 1,
       \}
 ```
 
@@ -2560,8 +2568,10 @@ let g:ycm_autoclose_preview_window_after_insertion = 0
 ### The `g:ycm_max_diagnostics_to_display` option
 
 This option controls the maximum number of diagnostics shown to the user when
-errors or warnings are detected in the file. This option is only relevant if you
-are using the C-family semantic completion engine.
+errors or warnings are detected in the file. This option is only relevant for
+the C-family, C#, Java, JavaScript, and TypeScript languages.
+
+A special value of `0` means there is no limit.
 
 Default: `30`
 
@@ -2758,17 +2768,17 @@ Default: `[see next line]`
 
 ```viml
 let g:ycm_semantic_triggers =  {
-  \   'c' : ['->', '.'],
-  \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
-  \             're!\[.*\]\s'],
-  \   'ocaml' : ['.', '#'],
-  \   'cpp,cuda,objcpp' : ['->', '.', '::'],
-  \   'perl' : ['->'],
-  \   'php' : ['->', '::'],
-  \   'cs,java,javascript,typescript,d,python,perl6,scala,vb,elixir,go' : ['.'],
-  \   'ruby' : ['.', '::'],
-  \   'lua' : ['.', ':'],
-  \   'erlang' : [':'],
+  \   'c': ['->', '.'],
+  \   'objc': ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
+  \            're!\[.*\]\s'],
+  \   'ocaml': ['.', '#'],
+  \   'cpp,cuda,objcpp': ['->', '.', '::'],
+  \   'perl': ['->'],
+  \   'php': ['->', '::'],
+  \   'cs,d,elixir,go,groovy,java,javascript,julia,perl6,python,scala,typescript,vb': ['.'],
+  \   'ruby,rust': ['.', '::'],
+  \   'lua': ['.', ':'],
+  \   'erlang': [':'],
   \ }
 ```
 
@@ -2800,15 +2810,14 @@ let g:ycm_use_ultisnips_completer = 1
 ### The `g:ycm_goto_buffer_command` option
 
 Defines where `GoTo*` commands result should be opened. Can take one of the
-following values:
-`[ 'same-buffer', 'split', 'split-or-existing-window' ]`
-If this option is set to the `'same-buffer'` but current buffer can not
-be switched (when buffer is modified and `nohidden` option is set),
-then result will be opened in a split. When the option is set to
+following values: `'same-buffer'`, `'split'`, or `'split-or-existing-window'`.
+If this option is set to the `'same-buffer'` but current buffer can not be
+switched (when buffer is modified and `nohidden` option is set), then result
+will be opened in a split. When the option is set to
 `'split-or-existing-window'`, if the result is already open in a window of the
-current tab page (or any tab pages with the `:tab` modifier; see below), it
-will jump to that window. Otherwise, the result will be opened in a split as if
-the option was set to `'split'`.
+current tab page (or any tab pages with the `:tab` modifier; see below), it will
+jump to that window. Otherwise, the result will be opened in a split as if the
+option was set to `'split'`.
 
 To customize the way a new window is split, prefix the `GoTo*` command with one
 of the following modifiers: `:aboveleft`, `:belowright`, `:botright`,
@@ -2823,6 +2832,10 @@ To open in a new tab page, use the `:tab` modifier with the `'split'` or
 ```viml
 :tab YcmCompleter GoTo
 ```
+
+**NOTE:** command modifiers were added in Vim 7.4.1898. If you are using an
+older version, you can still configure this by setting the option to one of the
+deprecated values: `'vertical-split'`, `'new-tab'`, or `'new-or-existing-tab'`.
 
 Default: `'same-buffer'`
 
@@ -2840,22 +2853,6 @@ Default: 1000
 ```viml
 let g:ycm_disable_for_files_larger_than_kb = 1000
 ```
-
-### The `g:ycm_python_binary_path` option
-
-This option specifies the Python interpreter to use to run the [jedi][]
-completion library.  Specify the Python interpreter to use to get completions.
-By default the Python under which [ycmd][] runs is used ([ycmd][] runs on
-Python 2.7.1+ or 3.4+).
-
-Default: `''`
-
-```viml
-let g:ycm_python_binary_path = 'python'
-```
-
-**NOTE:** the settings above will make YCM use the first `python` executable
-found through the PATH.
 
 FAQ
 ---
@@ -3042,21 +3039,13 @@ version of libpython on your machine (for instance,
 `-DPYTHON_LIBRARY=/usr/lib/libpython2.7.so`). Naturally, this means you'll have
 to go through the full installation guide by hand.
 
-### I get `Vim: Caught deadly signal SEGV` on Vim startup
+### I see `undefined symbol: clang_getCompletionFixIt` in the server logs.
 
-This can happen on some Linux distros. If you encounter this situation, run Vim
-under `gdb`. You'll probably see something like this in the output when Vim
-crashes:
-
-```
-undefined symbol: clang_CompileCommands_dispose
-```
-
-This means that Vim is trying to load a `libclang.so` that is too old. You need
-at least a 3.9 libclang. Just go through the installation guide and make sure
-you are using a correct `libclang.so`. We recommend downloading prebuilt
-binaries from llvm.org.
-
+This means that the server is trying to load a version of libclang that is too
+old. You need at least libclang 7.0.0. We recommend running the `install.py`
+script without `--system-libclang` or downloading the [latest prebuilt binaries
+from llvm.org][clang-download] when going through the [full installation
+guide](#full-installation-guide).
 
 ### I get `Fatal Python error: PyThreadState_Get: no current thread` on startup
 
@@ -3283,9 +3272,9 @@ EOF
 ### I hear that YCM only supports Python 2, is that true?
 
 **No.** Both the Vim client and the [ycmd server][ycmd] run on Python 2 or 3. If
-you work on a Python 3 project, you may need to set `g:ycm_python_binary_path`
-to the Python interpreter you use for your project to get completions for that
-version of Python.
+you are talking about code completion in a project, you can configure the Python
+used for your project through a `.ycm_extra_conf.py` file. See [the Python
+Semantic Completion section](#python-semantic-completion) for more details.
 
 ### On Windows I get `E887: Sorry, this command is disabled, the Python's site module could not be loaded`
 
@@ -3294,15 +3283,22 @@ If you are running vim on Windows with Python 2.7.11, this is likely caused by a
 [workaround][vim_win-python2.7.11-bug_workaround] or use a different version
 (Python 2.7.12 does not suffer from the bug).
 
-### I can't complete python packages in a virtual environment.
+### I can't complete Python packages in a virtual environment.
 
-This means that the Python used to run [JediHTTP][] is not the Python of the
-virtual environment you're in. To resolve this you either set
-`g:ycm_python_binary_path` to the absolute path of the Python binary in your
-virtual environment or since virtual environment will put that Python
-executable first in your PATH when the virtual environment is active then if
-you set `g:ycm_python_binary_path` to just `'python'` it will be found as the
-first Python and used to run [JediHTTP][].
+This means that the Python used to run [Jedi][] is not the Python of the virtual
+environment you're in. To resolve this you should create a `.ycm_extra_conf.py`
+file at the root of your project that sets the `interpreter_path` option to the
+Python of your virtual environment, e.g.
+
+```python
+def Settings(**kwargs):
+  return {
+    'interpreter_path': '/path/to/virtual/env/bin/python'
+  }
+```
+
+See [the Python Semantic Completion section](#python-semantic-completion) for
+more details.
 
 ### I want to defer loading of YouCompleteMe until after Vim finishes booting
 
@@ -3321,10 +3317,10 @@ augroup END
 
 YCM relies on the `VimLeave` event to shut down the [ycmd server][ycmd]. Some
 plugins prevent this event from triggering by exiting Vim through an autocommand
-without using the `nested` keyword (see `:h autocmd-nested`). One of these
-plugins is [vim-nerdtree-tabs][]. You should identify which plugin is
-responsible for the issue and report it to the plugin author. Note that when
-this happens, [ycmd][] will automatically shut itself down after 30 minutes.
+without using the `nested` keyword (see `:h autocmd-nested`). You should
+identify which plugin is responsible for the issue and report it to the plugin
+author. Note that when this happens, [ycmd][] will automatically shut itself
+down after 30 minutes.
 
 ### YCM does not work with my Anaconda Python setup
 
@@ -3332,8 +3328,23 @@ Anaconda is often incompatible with the pre-built libclang used by YCM
 and therefore is not supported. The recommended way to solve this is to run
 `/path/to/real/python install.py` (for example `/usr/bin/python install.py`).
 
-If you want completion in Anaconda projects, set
-`g:ycm_python_binary_path` to point to the full path of your Anaconda python.
+If you want completion in Anaconda projects, point the `interpreter_path` option
+in your `.ycm_extra_conf.py` file to the path of your Anaconda Python e.g.
+
+```python
+def Settings(**kwargs):
+  return {
+    'interpreter_path': '/path/to/anaconda/python'
+  }
+```
+
+See [the Python Semantic Completion section](#python-semantic-completion) for
+more details.
+
+### Automatic import insertion after selecting a completion breaks undo
+
+This is a Vim bug fixed in version 8.1.0256. Update your Vim to this version or
+later.
 
 Contributor Code of Conduct
 ---------------------------
@@ -3360,7 +3371,7 @@ The latest version of the plugin is available at
 The author's homepage is <http://val.markovic.io>.
 
 Please do **NOT** go to #vim on freenode for support. Please contact the
-YouCompleteMe maintainers directly using the [contact details](#contact) below.
+YouCompleteMe maintainers directly using the [contact details](#contact).
 
 License
 -------
@@ -3381,7 +3392,8 @@ This software is licensed under the [GPL v3 license][gpl].
 [vim]: http://www.vim.org/
 [syntastic]: https://github.com/scrooloose/syntastic
 [lightline]: https://github.com/itchyny/lightline.vim
-[flags_example]: https://raw.githubusercontent.com/Valloric/ycmd/66030cd94299114ae316796f3cad181cac8a007c/.ycm_extra_conf.py
+[ycm_flags_example]: https://github.com/Valloric/YouCompleteMe/blob/master/.ycm_extra_conf.py
+[ycmd_flags_example]: https://raw.githubusercontent.com/Valloric/ycmd/66030cd94299114ae316796f3cad181cac8a007c/.ycm_extra_conf.py
 [compdb]: http://clang.llvm.org/docs/JSONCompilationDatabase.html
 [subsequence]: https://en.wikipedia.org/wiki/Subsequence
 [listtoggle]: https://github.com/Valloric/ListToggle
@@ -3411,16 +3423,15 @@ This software is licensed under the [GPL v3 license][gpl].
 [TSServer]: https://github.com/Microsoft/TypeScript/tree/master/src/server
 [jsconfig.json]: https://code.visualstudio.com/docs/languages/jsconfig
 [tsconfig.json]: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html
-[vim-win-download]: https://bintray.com/micbou/generic/vim
+[vim-win-download]: https://github.com/vim/vim-win32-installer/releases
 [python-win-download]: https://www.python.org/downloads/windows/
 [visual-studio-download]: https://www.visualstudio.com/downloads/
 [7z-download]: http://www.7-zip.org/download.html
 [mono-install-osx]: http://www.mono-project.com/docs/getting-started/install/mac/
-[mono-install-ubuntu]: http://www.mono-project.com/docs/getting-started/install/linux/#debian-ubuntu-and-derivatives
-[mono-install-fedora]: http://www.mono-project.com/docs/getting-started/install/linux/#centos-7-fedora-19-and-later-and-derivatives
+[mono-install-linux]: https://www.mono-project.com/download/stable/#download-lin
 [mono-install]: http://www.mono-project.com/docs/getting-started/install/
 [go-install]: https://golang.org/doc/install
-[npm-install]: https://docs.npmjs.com/getting-started/installing-node
+[npm-install]: https://docs.npmjs.com/getting-started/installing-node#1-install-nodejs--npm
 [tern-instructions]: https://github.com/Valloric/YouCompleteMe/wiki/JavaScript-Semantic-Completion-through-Tern
 [Tern]: http://ternjs.net
 [racer]: https://github.com/phildawes/racer
@@ -3429,12 +3440,10 @@ This software is licensed under the [GPL v3 license][gpl].
 [add-msbuild-to-path]: http://stackoverflow.com/questions/6319274/how-do-i-run-msbuild-from-the-command-line-using-windows-sdk-7-1
 [identify-R6034-cause]: http://stackoverflow.com/questions/14552348/runtime-error-r6034-in-embedded-python-application/34696022
 [ccoc]: https://github.com/Valloric/YouCompleteMe/blob/master/CODE_OF_CONDUCT.md
-[JediHTTP]: https://github.com/vheon/JediHTTP
 [vim_win-python2.7.11-bug]: https://github.com/vim/vim/issues/717
 [vim_win-python2.7.11-bug_workaround]: https://github.com/vim/vim-win32-installer/blob/a27bbdba9bb87fa0e44c8a00d33d46be936822dd/appveyor.bat#L86-L88
 [gitter]: https://gitter.im/Valloric/YouCompleteMe
 [ninja-compdb]: https://ninja-build.org/manual.html
-[vim-nerdtree-tabs]: https://github.com/jistr/vim-nerdtree-tabs
 [++enc]: http://vimdoc.sourceforge.net/htmldoc/editing.html#++enc
 [rustup]: https://www.rustup.rs/
 [contributing-md]: https://github.com/Valloric/YouCompleteMe/blob/master/CONTRIBUTING.md
@@ -3445,9 +3454,9 @@ This software is licensed under the [GPL v3 license][gpl].
 [gradle-project]: https://docs.gradle.org/current/userguide/tutorial_java_projects.html
 [eclipse-dot-project]: https://help.eclipse.org/oxygen/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Freference%2Fmisc%2Fproject_description_file.html
 [eclipse-dot-classpath]: https://help.eclipse.org/mars/index.jsp?topic=%2Forg.eclipse.jdt.doc.isv%2Freference%2Fapi%2Forg%2Feclipse%2Fjdt%2Fcore%2FIClasspathEntry.html
-[ycmd-eclipse-project]: https://github.com/Valloric/ycmd/tree/master/ycmd/tests/java/testdata/simple_eclipse_project
-[ycmd-mvn-pom-xml]: https://github.com/Valloric/ycmd/blob/java-language-server/ycmd/tests/java/testdata/simple_maven_project/pom.xml
-[ycmd-gradle-project]: https://github.com/Valloric/ycmd/tree/master/ycmd/tests/java/testdata/simple_gradle_project
+[ycmd-eclipse-project]: https://github.com/Valloric/ycmd/tree/3602f38ef7a762fc765afd75e562aec9a134711e/ycmd/tests/java/testdata/simple_eclipse_project
+[ycmd-mvn-pom-xml]: https://github.com/Valloric/ycmd/blob/3602f38ef7a762fc765afd75e562aec9a134711e/ycmd/tests/java/testdata/simple_maven_project/pom.xml
+[ycmd-gradle-project]: https://github.com/Valloric/ycmd/tree/3602f38ef7a762fc765afd75e562aec9a134711e/ycmd/tests/java/testdata/simple_gradle_project
 [jdtls-release]: http://download.eclipse.org/jdtls/milestones
 [diacritic]: https://www.unicode.org/glossary/#diacritic
 [regex]: https://pypi.org/project/regex/
