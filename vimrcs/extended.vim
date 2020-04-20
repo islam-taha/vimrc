@@ -27,8 +27,10 @@ set termguicolors     " enable true colors support
 " colorscheme nachtleben
 " colorscheme gotham256
 " colorscheme orbital
-" colorscheme monokai_pro
-colorscheme lucid
+colorscheme monokai_pro
+" colorscheme lucid
+" let g:sierra_Midnight = 1
+" colorscheme sierra
 
 " $NVIM_TUI_ENABLE_CURSOR_SHAPE = 1
 let &t_SI = "\<Esc>]50;CursorShape=0\x7"
@@ -37,6 +39,7 @@ let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
 set guicursor="n-v-c-sm:block,i-ci-ve:block,r-cr-o:block"
+set relativenumber
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -136,7 +139,7 @@ endif
 vnoremap <silent> gv :call VisualSelection('gv', '')<CR>
 
 " Open Ack and put the cursor in the right position
-map <leader>g :Ack
+" map <leader>g :Ack
 
 " When you press <leader>r you can search and replace the selected text
 vnoremap <silent> <leader>r :call VisualSelection('replace', '')<CR>
@@ -208,13 +211,16 @@ if has("clipboard")
 endif
 
 " Performance improvments
-if has("mac")
-  set nocursorline
+" if has("mac")
+"   set nocursorline
 
-  if exists("+relativenumber")
-    set norelativenumber
-  endif
+"   if exists("+relativenumber")
+"     set norelativenumber
+"   endif
 
-  set foldlevel=0
-  set foldmethod=manual
-endif
+"   set foldlevel=0
+"   set foldmethod=manual
+" endif
+"
+let g:loaded_sql_completion = 0
+let g:omni_sql_no_default_maps = 1
